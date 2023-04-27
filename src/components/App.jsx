@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ContactsList } from './Contacts/ContactsList';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
@@ -16,16 +16,20 @@ export const App = () => {
   ]);
   const [filter, setFilter] = useState('');
 
+   const firstRenter = useRef(true)
+
   useEffect(() => {
-    if (localStorage.getItem('contacts_book')) {
-      setContacts(JSON.parse(localStorage.getItem('contacts_book')));
+    if (firstRenter.current) {
+      const savedContacts = localStorage.getItem('contacts_book');
+      if (savedContacts) {
+        setContacts(JSON.parse(localStorage.getItem('contacts_book')));
+      }
+      firstRenter.current = false;
+      return
     }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('contacts_book', JSON.stringify(contacts));
+   localStorage.setItem('contacts_book', JSON.stringify(contacts));
   }, [contacts]);
-
+   
   const addContact = newContact => {
     if (
       contacts.find(
